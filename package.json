@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@astrojs/compiler": "^4.0.0",
-    "@astrojs/compiler-binding-wasm32-wasi": "^0.4.0",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.2.9",
     "tailwindcss": "^4.3.3"
