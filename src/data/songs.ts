@@ -4,7 +4,7 @@ export type Song = {
   artist: string;
 };
 
-export const PLAYLIST_ID = 'PLUKBMAqy5FT0';
+export const PLAYLIST_ID = 'PLNRBgd_0X_og';
 
 export const SONGS: Song[] = [
   {
@@ -436,5 +436,185 @@ export const SONGS: Song[] = [
     youtubeId: "6WLugDJYXmM",
     title: "Ladki Kyon",
     artist: "Shaan & Alka Yagnik"
+  },
+  {
+    youtubeId: "kZqH9Kfv6BI",
+    title: "Radha",
+    artist: "Shreya Ghoshal, Udit Narayan, Vishal Dadlani & Shekhar Ravjiani"
+  },
+  {
+    youtubeId: "o1RducJbUdc",
+    title: "Tumhi Ho Bandhu (Full Video)",
+    artist: "Neeraj Shridhar & Kavita Seth"
+  },
+  {
+    youtubeId: "dodDteh-m3Q",
+    title: "Kashmir Main Tu Kanyakumari",
+    artist: "Sunidhi Chauhan, Arijit Singh & Neeti Mohan"
+  },
+  {
+    youtubeId: "zBlklssMFEo",
+    title: "Tere Pyaar Mein",
+    artist: "Arijit Singh & Nikhita Gandhi"
+  },
+  {
+    youtubeId: "yIIGQB6EMAM",
+    title: "Bom Diggy Diggy",
+    artist: "Zack Knight & Jasmin Walia"
+  },
+  {
+    youtubeId: "yDv0WSgXJVg",
+    title: "Senorita",
+    artist: "Farhan Akhtar, Hrithik Roshan, Abhay Deol & Maria del Mar Fernández"
+  },
+  {
+    youtubeId: "gcVbtUGLDNk",
+    title: "Aapka Kya Hoga Janabe Ali (Dhanno)",
+    artist: "Mika Singh, Sunidhi Chauhan & Sajid-Wajid"
+  },
+  {
+    youtubeId: "gQ5qVtoLMk4",
+    title: "Dildara (Stand By Me)",
+    artist: "Shafqat Amanat Ali & Vishal-Shekhar"
+  },
+  {
+    youtubeId: "f6vY6tYvKGA",
+    title: "Cham Cham",
+    artist: "Monali Thakur & Meet Bros"
+  },
+  {
+    youtubeId: "mXkbWKr5ovU",
+    title: "Tumse Milke Dil Ka Jo Haal",
+    artist: "Sonu Nigam & Aftab Sabri"
+  },
+  {
+    youtubeId: "zE7Pwgl6sLA",
+    title: "Fevicol Se",
+    artist: "Mamta Sharma & Wajid"
+  },
+  {
+    youtubeId: "NXDcea-5IfA",
+    title: "Dil Na Diya",
+    artist: "Kunal Ganjawala"
+  },
+  {
+    youtubeId: "X-DDknSzELI",
+    title: "India Waale",
+    artist: "Neeti Mohan, Vishal Dadlani, K.K. & Shankar Mahadevan"
+  },
+  {
+    youtubeId: "fdubeMFwuGs",
+    title: "Ilahi",
+    artist: "Arijit Singh"
+  },
+  {
+    youtubeId: "NTHz9ephYTw",
+    title: "Kar Gayi Chull",
+    artist: "Badshah, Fazilpuria, Sukriti Kakar & Neha Kakkar"
+  },
+  {
+    youtubeId: "RpuhD_xKadk",
+    title: "Sweety Tera Drama",
+    artist: "Dev Negi, Pawni Pandey & Shraddha Pandit"
+  },
+  {
+    youtubeId: "mpjNh-uGBY4",
+    title: "Sau Aasmaan",
+    artist: "Armaan Malik & Neeti Mohan"
+  },
+  {
+    youtubeId: "zC3UbTf4qrM",
+    title: "Afghan Jalebi (Ya Baba)",
+    artist: "Asrar"
+  },
+  {
+    youtubeId: "05TA9jNnCdU",
+    title: "Galti Se Mistake",
+    artist: "Arijit Singh & Amit Mishra"
+  },
+  {
+    youtubeId: "W9mrvDWUR9g",
+    title: "One Two Three Four (Get On The Dance Floor)",
+    artist: "Vishal Dadlani & Hamsika Iyer"
+  },
+  {
+    youtubeId: "T15qhmhqraE",
+    title: "Billo Rani",
+    artist: "Anand Raaj Anand & Richa Sharma"
+  },
+  {
+    youtubeId: "IBvg3WeqP1U",
+    title: "Bole Chudiyan",
+    artist: "Kavita Krishnamurthy, Alka Yagnik, Sonu Nigam, Udit Narayan & Amit Kumar"
+  },
+  {
+    youtubeId: "MXJCnccDLA0",
+    title: "Sunny Sunny (Yaariyan)",
+    artist: "Yo Yo Honey Singh & Neha Kakkar"
+  },
+  {
+    youtubeId: "5GCfYLguTIs",
+    title: "Boyfriend",
+    artist: "Karan Aujla & Sunanda Sharma"
+  },
+  {
+    youtubeId: "cWMxCE2HTag",
+    title: "Softly",
+    artist: "Karan Aujla & Ikky"
+  },
+  {
+    youtubeId: "k4yXQkG2s1E",
+    title: "Kala Chashma",
+    artist: "Amar Arshi, Badshah & Neha Kakkar"
+  },
+  {
+    youtubeId: "70QpN7DvaK4",
+    title: "Pretty Woman",
+    artist: "Shankar Mahadevan"
+  },
+  {
+    youtubeId: "H1YR5rsScC8",
+    title: "Janiye",
+    artist: "Vishal Mishra & Rashmeet Kaur"
+  },
+  {
+    youtubeId: "9Z79T_o4v8c",
+    title: "Lutt Putt Gaya",
+    artist: "Arijit Singh"
+  },
+  {
+    youtubeId: "1tVL11ULjYY",
+    title: "The Humma Song",
+    artist: "A.R. Rahman, Badshah, Jubin Nautiyal & Shashaa Tirupati"
+  },
+  {
+    youtubeId: "k89egJyAlDE",
+    title: "Paani Wala Dance",
+    artist: "Ikka, Arko & Shraddha Pandit"
+  },
+  {
+    youtubeId: "eUhzDf9eRbM",
+    title: "Chalti Hai Kya 9 Se 12 (Lift Teri Bandh Hai)",
+    artist: "Dev Negi & Neha Kakkar"
+  },
+  {
+    youtubeId: "M_GNL2Vp8MM",
+    title: "D Se Dance",
+    artist: "Vishal Dadlani & Shalmali Kholgade"
+  },
+  {
+    youtubeId: "1YBl3Zbt80A",
+    title: "Badri Ki Dulhania",
+    artist: "Dev Negi, Neha Kakkar, Monali Thakur & Ikka"
+  },
+  {
+    youtubeId: "XLqmL9cPN1E",
+    title: "Teri Baaton Mein Aisa Uljha Jiya",
+    artist: "Raghav, Tanishk Bagchi & Asees Kaur"
+  },
+  {
+    youtubeId: "Cu3QpWEfqgg",
+    title: "Tenu Leke",
+    artist: "Sonu Nigam & Mahalakshmi Iyer"
   }
 ];

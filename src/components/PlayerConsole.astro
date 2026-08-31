@@ -1,5 +1,5 @@
 ---
-
+import songsData from "../data/songs.json";
 ---
 
 <div
@@ -15,7 +15,7 @@
         <div class="w-0.5 bg-[#ff9f1c] eq-bar-3"></div>
       </div>
       <span id="player-track-number" class="font-mono text-xs sm:text-sm text-[#a39b8e]">
-        Track 01 of 86
+        Track 01 of {songsData.length}
       </span>
     </div>
 
