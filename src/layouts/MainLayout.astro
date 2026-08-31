@@ -1,0 +1,99 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Chatpate ( चटपटे ) — Intimate Music Listening Space",
+  description = "A quiet, intimate music listening space for 2010s Bollywood party bangers and nostalgic desi energy."
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/icon.png" />
+    <link rel="shortcut icon" href="/icon.png" />
+    <link rel="apple-touch-icon" href="/icon.png" />
+    
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://chatpate.vercel.app/" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="/bg.png" />
+
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://chatpate.vercel.app/" />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content="/bg.png" />
+
+    <meta name="theme-color" content="#07050a" />
+  </head>
+  <body class="h-full bg-[#07050a] text-[#f5f0e1] selection:bg-[#e2b170] selection:text-black font-sans relative overflow-hidden">
+    
+    <!-- Full-Bleed Atmospheric Background Image Layer -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden select-none">
+      <img
+        src="/bg.png"
+        alt="Atmospheric Backdrop"
+        class="w-full h-full object-cover opacity-90"
+      />
+
+      <!-- Comic Halftone & Radial Ambient Glow Layer -->
+      <div class="absolute inset-0 bg-halftone opacity-30 mix-blend-overlay"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-[#ff9f1c]/10 rounded-full blur-[150px] pointer-events-none"></div>
+
+      <!-- Scattered Musical & Comic Pop Decorative Elements (Positioned in Dead Space around Player) -->
+      <div class="absolute inset-0 max-w-7xl mx-auto overflow-hidden pointer-events-none">
+        
+        <!-- Left Side Floating Music Notes & Sparkles -->
+        <div class="absolute left-8 top-1/4 animate-float-slow text-[#ff9f1c]/50 text-4xl select-none font-serif">
+          ♪
+        </div>
+        <div class="absolute left-20 top-1/3 animate-float-reverse text-[#f5f0e1]/30 text-2xl select-none">
+          ✦
+        </div>
+        <div class="absolute left-12 bottom-1/3 animate-float-slow text-[#ff9f1c]/60 text-5xl select-none">
+          ♫
+        </div>
+        <div class="absolute left-28 bottom-1/4 animate-float-reverse text-[#a39b8e]/40 font-mono text-sm tracking-widest uppercase rotate-[-12deg]">
+          ★ DISCO ★
+        </div>
+
+        <!-- Right Side Floating Pop Accents -->
+        <div class="absolute right-16 top-1/4 animate-float-reverse text-[#ff9f1c]/50 text-3xl select-none">
+          ♬
+        </div>
+        <div class="absolute right-24 bottom-1/3 animate-float-slow text-[#f5f0e1]/25 text-3xl select-none">
+          ✧
+        </div>
+        <div class="absolute right-10 bottom-1/4 animate-float-reverse text-[#ff9f1c]/60 text-4xl select-none font-serif">
+          ♩
+        </div>
+
+        <!-- Top & Bottom Accent Doodles -->
+        <div class="absolute left-1/3 top-16 text-[#ff9f1c]/30 font-mono text-xs tracking-widest uppercase animate-float-slow">
+          ♪ CHATPATE SOUNDS ♪
+        </div>
+        <div class="absolute right-1/3 bottom-16 text-[#ff9f1c]/30 font-mono text-xs tracking-widest uppercase animate-float-reverse">
+          ✦ HIGH VOLTAGE ✦
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 h-full flex flex-col justify-between overflow-y-auto custom-scrollbar">
+      <slot />
+    </div>
+  </body>
+</html>

@@ -1,0 +1,168 @@
+---
+
+---
+
+<div
+  id="player-console-container"
+  class="glass-console p-4 sm:p-10 relative overflow-hidden space-y-4 sm:space-y-6 max-w-2xl mx-auto shadow-2xl"
+>
+  <!-- Song Identity (Elegant Serif Typography) -->
+  <div class="text-center space-y-1 sm:space-y-2">
+    <div class="flex items-center justify-center gap-2">
+      <div id="player-eq-bars" class="flex items-end gap-0.5 h-3">
+        <div class="w-0.5 bg-[#e2b170] eq-bar-1"></div>
+        <div class="w-0.5 bg-[#e2b170] eq-bar-2"></div>
+        <div class="w-0.5 bg-[#e2b170] eq-bar-3"></div>
+      </div>
+      <span id="player-track-number" class="font-mono text-[11px] sm:text-xs text-[#a39b8e]">
+        Track 01 of 86
+      </span>
+    </div>
+
+    <h2
+      id="player-song-title"
+      class="font-serif text-xl sm:text-4xl text-[#f5f0e1] tracking-wide pt-0.5 leading-snug truncate px-2"
+    >
+      Select a song to listen
+    </h2>
+    <p
+      id="player-song-artist"
+      class="font-sans text-xs sm:text-sm text-[#a39b8e] font-light"
+    >
+      Chatpate Bollywood Collection
+    </p>
+  </div>
+
+  <!-- YouTube Video / Artwork Container -->
+  <div
+    id="player-frame-container"
+    class="w-full aspect-video overflow-hidden bg-black/90 border border-white/10 relative shadow-2xl group transition-all duration-300"
+  >
+    <div id="yt-player-iframe" class="w-full h-full"></div>
+
+    <!-- Error Fallback Banner View -->
+    <div
+      id="player-fallback-view"
+      class="absolute inset-0 bg-[#07050a] hidden flex-col items-center justify-center p-6 text-center z-20"
+    >
+      <div class="space-y-3">
+        <span class="text-2xl">⚠️</span>
+        <h4
+          id="fallback-song-title"
+          class="font-serif text-base text-[#e2b170]"
+        >
+          Playback Restricted
+        </h4>
+        <p class="text-xs text-[#a39b8e]">Auto-skipping to next track...</p>
+        <button
+          id="fallback-skip-btn"
+          class="text-xs font-mono text-[#e2b170] underline"
+        >
+          Skip Track ⏩
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Seek Timeline Slider -->
+  <div class="space-y-2">
+    <input
+      type="range"
+      id="player-seek-slider"
+      min="0"
+      max="100"
+      value="0"
+      class="w-full"
+    />
+    <div class="flex justify-between font-mono text-[11px] text-[#a39b8e]">
+      <span id="player-current-time">00:00</span>
+      <span id="player-total-duration">00:00</span>
+    </div>
+  </div>
+
+  <!-- Minimal Transport Controls Bar -->
+  <div class="flex items-center justify-between pt-2">
+    <!-- Left Mode Toggles (Shuffle / Repeat) -->
+    <div class="flex items-center gap-4">
+      <button
+        id="player-shuffle-btn"
+        class="text-[#a39b8e] hover:text-[#f5f0e1] transition-colors relative"
+        title="Toggle Shuffle (S)"
+      >
+        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.45 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
+        <span id="shuffle-indicator" class="absolute -top-1 -right-1 text-[8px] text-[#ff9f1c] font-bold hidden">•</span>
+      </button>
+      <button
+        id="player-repeat-btn"
+        class="text-[#a39b8e] hover:text-[#f5f0e1] transition-colors relative"
+        title="Toggle Repeat (R)"
+      >
+        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v3z"/></svg>
+        <span id="repeat-indicator" class="absolute -top-1 -right-1 text-[8px] text-[#ff9f1c] font-bold hidden">•</span>
+      </button>
+    </div>
+
+    <!-- Center Transport Controls -->
+    <div class="flex items-center gap-6">
+      <button
+        id="player-prev-btn"
+        class="text-[#a39b8e] hover:text-[#f5f0e1] transition-colors"
+        title="Previous Track (←)"
+      >
+        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+      </button>
+
+      <!-- Clean Circular Outline Play/Pause Button -->
+      <button
+        id="player-play-toggle-btn"
+        class="w-12 h-12 border border-[#ff9f1c] text-[#f5f0e1] flex items-center justify-center hover:bg-[#ff9f1c] hover:text-black transition-all shadow-lg"
+        title="Play / Pause (Space)"
+      >
+        <span id="play-icon" class="flex items-center justify-center">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </span>
+      </button>
+
+      <button
+        id="player-next-btn"
+        class="text-[#a39b8e] hover:text-[#f5f0e1] transition-colors"
+        title="Next Track (→)"
+      >
+        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+      </button>
+    </div>
+
+    <!-- Right Controls (Volume) -->
+    <div class="flex items-center gap-2">
+      <button
+        id="player-mute-btn"
+        class="text-[#a39b8e] hover:text-[#f5f0e1] transition-colors"
+        title="Mute / Unmute (M)"
+      >
+        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+      </button>
+      <input
+        type="range"
+        id="player-volume-slider"
+        min="0"
+        max="100"
+        value="80"
+        class="w-16 hidden sm:block"
+      />
+    </div>
+  </div>
+
+  <!-- Up Next Preview Strip -->
+  <div
+    class="pt-4 border-t border-white/5 flex items-center justify-between text-xs text-[#a39b8e]"
+  >
+    <span class="font-mono text-[10px] uppercase tracking-wider text-[#e2b170]"
+      >UP NEXT:</span
+    >
+    <span
+      id="player-up-next-title"
+      class="truncate font-sans font-light text-[#f5f0e1] max-w-[280px]"
+      >Loading next track...</span
+    >
+  </div>
+</div>
