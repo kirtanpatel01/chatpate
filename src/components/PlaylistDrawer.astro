@@ -24,7 +24,7 @@ import songsData from '../data/songs.json';
         type="text"
         id="drawer-search-input"
         placeholder="Search tracks..."
-        class="w-full bg-[#07050a] border border-white/10 px-4 py-2.5 text-xs text-[#f5f0e1] focus:outline-none focus:border-[#ff9f1c] placeholder:text-[#a39b8e]/50 font-sans"
+        class="w-full bg-[#07050a] border border-white/10 px-4 py-2.5 text-sm text-[#f5f0e1] focus:outline-none focus:border-[#ff9f1c] placeholder:text-[#a39b8e]/50 font-sans"
       />
     </div>
   </div>
@@ -55,10 +55,10 @@ import songsData from '../data/songs.json';
 
           <!-- Song Title & Singer Name -->
           <div class="truncate space-y-0.5">
-            <p class="drawer-title-text font-sans font-medium text-xs sm:text-sm text-[#f5f0e1] group-hover:text-[#ff9f1c] truncate transition-colors">
+            <p class="drawer-title-text font-sans font-medium text-sm text-[#f5f0e1] group-hover:text-[#ff9f1c] truncate transition-colors">
               {song.title}
             </p>
-            <p class="text-[11px] font-sans font-light text-[#a39b8e] truncate">
+            <p class="text-xs font-sans text-[#a39b8e] truncate">
               {song.artist}
             </p>
           </div>

@@ -3,6 +3,8 @@ import MainLayout from "../layouts/MainLayout.astro";
 import Header from "../components/Header.astro";
 import PlayerConsole from "../components/PlayerConsole.astro";
 import PlaylistDrawer from "../components/PlaylistDrawer.astro";
+import SuggestionModal from "../components/SuggestionModal.astro";
+import FeedbackNoteModal from "../components/FeedbackNoteModal.astro";
 import songsData from "../data/songs.json";
 ---
 
@@ -12,9 +14,9 @@ import songsData from "../data/songs.json";
 
   <!-- Centered Floating Player Environment -->
   <main
-    class="flex-1 w-full px-3 sm:px-16 py-4 sm:py-16 flex items-center justify-center"
+    class="flex-1 w-full px-3 sm:px-8 py-3 sm:py-8 flex items-center justify-center"
   >
-    <div class="w-full max-w-2xl px-1 sm:px-8">
+    <div class="w-full max-w-lg px-1 sm:px-4">
       <PlayerConsole />
     </div>
   </main>
@@ -22,22 +24,70 @@ import songsData from "../data/songs.json";
   <!-- Mobile & Slide-Out Song Queue -->
   <PlaylistDrawer />
 
-  <!-- Personal Tagline & Credit Footer -->
+  <!-- Formspree Modals -->
+  <SuggestionModal />
+  <FeedbackNoteModal />
+
+  <!-- Creator Footer & Social Links -->
   <footer class="w-full py-4 px-4 sm:px-6 shrink-0 z-10">
     <div
-      class="max-w-4xl mx-auto glass-pill-footer px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left"
+      class="max-w-4xl mx-auto glass-pill-footer px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left"
     >
-      <div>
-        <p class="font-serif text-xs text-[#f5f0e1] tracking-wide">
-          Made by Kirtan
+      <!-- Left Profile & Poetic Tagline -->
+      <div class="space-y-1">
+        <p class="font-serif text-sm text-[#f5f0e1] tracking-wide">
+          Made by <span class="text-[#ff9f1c]">Kirtan</span>
         </p>
-        <p class="font-sans font-light text-[11px] text-[#a39b8e] italic">
+        <p class="font-sans font-light text-xs text-[#a39b8e] italic">
           for people who like staying a little longer.
         </p>
+        <div class="flex items-center gap-4 text-xs font-mono text-[#a39b8e] pt-1">
+          <a
+            href="https://youtube.com/playlist?list=PLNRBgd_0X_og&si=r733CP_EUCr2GRxA"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="YouTube Playlist"
+            class="hover:text-[#ff9f1c] transition-colors"
+          >
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+          <a
+            href="https://github.com/kirtanpatel01/chatpate"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="GitHub Repository"
+            class="hover:text-[#ff9f1c] transition-colors"
+          >
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          </a>
+          <a
+            href="https://instagram.com/kjpatel.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Instagram Profile"
+            class="hover:text-[#ff9f1c] transition-colors"
+          >
+            <svg class="w-4 h-4 fill-none stroke-current" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+          </a>
+        </div>
       </div>
 
-      <div class="flex items-center gap-4 text-xs font-mono text-[#a39b8e]">
-        <span>© 2026 Chatpate</span>
+      <!-- Right Formspree Triggers -->
+      <div class="flex items-center gap-3">
+        <button
+          type="button"
+          id="open-suggestion-btn"
+          class="flex items-center gap-1.5 text-xs font-sans text-[#f5f0e1] border border-white/10 hover:border-[#ff9f1c]/50 bg-white/5 hover:bg-white/10 px-3.5 py-2 transition-all cursor-pointer"
+        >
+          <span>+ Suggest a Song</span>
+        </button>
+        <button
+          type="button"
+          id="open-feedback-btn"
+          class="flex items-center gap-1.5 text-xs font-sans text-[#f5f0e1] border border-white/10 hover:border-[#ff9f1c]/50 bg-white/5 hover:bg-white/10 px-3.5 py-2 transition-all cursor-pointer"
+        >
+          <span>💬 Leave a note</span>
+        </button>
       </div>
     </div>
   </footer>
@@ -210,8 +260,8 @@ import songsData from "../data/songs.json";
       playBtnIcons.forEach((icon) => {
         if (icon) {
           icon.innerHTML = isPlaying
-            ? `<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`
-            : `<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+            ? `<svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`
+            : `<svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
         }
       });
     }
@@ -327,8 +377,8 @@ import songsData from "../data/songs.json";
           const muteBtn = document.getElementById("player-mute-btn");
           if (muteBtn) {
             muteBtn.innerHTML = isMuted
-              ? `<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>`
-              : `<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>`;
+              ? `<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>`
+              : `<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>`;
           }
         });
 
@@ -424,6 +474,41 @@ import songsData from "../data/songs.json";
         .getElementById("drawer-close-btn")
         ?.addEventListener("click", closeDrawer);
       backdrop?.addEventListener("click", closeDrawer);
+
+      // Formspree Suggestion & Feedback Modal Handlers
+      const sugModal = document.getElementById("feedback-modal");
+      const sugBackdrop = document.getElementById("feedback-backdrop");
+      const closeSugBtn = document.getElementById("close-feedback-btn");
+      const openSugBtn = document.getElementById("open-suggestion-btn");
+
+      const noteModal = document.getElementById("general-feedback-modal");
+      const noteBackdrop = document.getElementById("general-feedback-backdrop");
+      const closeNoteBtn = document.getElementById("close-general-feedback-btn");
+      const openNoteBtn = document.getElementById("open-feedback-btn");
+
+      const openModalHelper = (m, b) => {
+        playSFX("click");
+        m?.classList.remove("opacity-0", "pointer-events-none", "scale-95");
+        m?.classList.add("opacity-100", "scale-100");
+        b?.classList.remove("opacity-0", "pointer-events-none");
+        b?.classList.add("opacity-100");
+      };
+
+      const closeModalHelper = (m, b) => {
+        playSFX("click");
+        m?.classList.remove("opacity-100", "scale-100");
+        m?.classList.add("opacity-0", "pointer-events-none", "scale-95");
+        b?.classList.remove("opacity-100");
+        b?.classList.add("opacity-0", "pointer-events-none");
+      };
+
+      openSugBtn?.addEventListener("click", () => openModalHelper(sugModal, sugBackdrop));
+      closeSugBtn?.addEventListener("click", () => closeModalHelper(sugModal, sugBackdrop));
+      sugBackdrop?.addEventListener("click", () => closeModalHelper(sugModal, sugBackdrop));
+
+      openNoteBtn?.addEventListener("click", () => openModalHelper(noteModal, noteBackdrop));
+      closeNoteBtn?.addEventListener("click", () => closeModalHelper(noteModal, noteBackdrop));
+      noteBackdrop?.addEventListener("click", () => closeModalHelper(noteModal, noteBackdrop));
 
       window.addEventListener("keydown", (e) => {
         if (["INPUT", "TEXTAREA"].includes(document.activeElement.tagName))

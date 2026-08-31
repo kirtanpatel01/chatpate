@@ -1,0 +1,176 @@
+---
+---
+
+<!-- Backdrop Overlay -->
+<div 
+  id="general-feedback-backdrop" 
+  class="fixed inset-0 bg-black/80 backdrop-blur-md z-40 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out"
+></div>
+
+<!-- Modal Dialog -->
+<div 
+  id="general-feedback-modal" 
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 pointer-events-none opacity-0 scale-95 transition-all duration-300 ease-out"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="general-feedback-title"
+>
+  <div class="w-full max-w-md bg-[#07050a]/95 backdrop-blur-2xl border border-white/15 shadow-2xl p-6 sm:p-7 text-[#f5f0e1] relative max-h-[85vh] sm:max-h-[90vh] overflow-y-auto custom-scrollbar select-none">
+    
+    <!-- Close Button -->
+    <div class="absolute top-5 right-5 group">
+      <button 
+        type="button"
+        id="close-general-feedback-btn" 
+        aria-label="Close form"
+        class="text-[#a39b8e] hover:text-[#f5f0e1] transition-colors p-1 cursor-pointer focus:outline-none"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Header -->
+    <div class="space-y-1 pr-8">
+      <h2 id="general-feedback-title" class="font-serif text-2xl sm:text-3xl text-[#f5f0e1] tracking-wide">
+        Leave a note
+      </h2>
+      <p class="font-sans text-xs sm:text-sm text-[#a39b8e] font-light leading-relaxed">
+        Something you'd like to tell us?
+      </p>
+    </div>
+
+    <!-- Success View -->
+    <div id="general-feedback-success-container" class="hidden text-center py-8 space-y-4">
+      <div class="w-10 h-10 border border-[#ff9f1c]/40 text-[#ff9f1c] flex items-center justify-center mx-auto text-lg">
+        ✓
+      </div>
+      <div class="space-y-1.5">
+        <h3 class="font-serif text-2xl sm:text-3xl text-[#f5f0e1] tracking-wide">
+          Got it.
+        </h3>
+        <p class="font-sans text-xs sm:text-sm text-[#a39b8e] font-light leading-relaxed">
+          Thanks for leaving a note!
+        </p>
+      </div>
+      <div class="pt-3 flex flex-col sm:flex-row items-center justify-center gap-2">
+        <button 
+          id="close-general-feedback-success-btn" 
+          type="button"
+          class="w-full sm:w-auto px-5 py-2 bg-[#ff9f1c] hover:bg-[#ff8f00] text-black font-sans font-medium text-xs tracking-wider transition-all cursor-pointer shadow-md"
+        >
+          Close
+        </button>
+        <button 
+          id="general-feedback-reset-btn" 
+          type="button"
+          class="w-full sm:w-auto px-4 py-2 bg-white/5 hover:bg-white/10 text-[#f5f0e1] font-sans text-xs tracking-wider transition-all cursor-pointer border border-white/10"
+        >
+          Leave another note
+        </button>
+      </div>
+    </div>
+
+    <!-- Form View -->
+    <form id="general-feedback-form" action="https://formspree.io/f/mvkozrrv" method="POST" class="mt-6 space-y-4 font-sans text-left">
+      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+      <input type="hidden" name="form_type" value="feedback" />
+
+      <!-- 1. Category Selection Pills -->
+      <div class="space-y-2">
+        <label class="block text-[10px] font-sans font-medium tracking-wider text-[#a39b8e] uppercase">
+          I'd like to...
+        </label>
+        <input type="hidden" name="feedback_type" id="general-feedback-type-hidden" value="Loved it" />
+        <div class="flex flex-wrap gap-1.5">
+          <button 
+            type="button" 
+            data-value="Loved it"
+            class="general-feedback-type-btn py-1.5 px-3 text-xs font-sans border transition-all cursor-pointer text-center bg-[#ff9f1c]/20 text-[#ff9f1c] border-[#ff9f1c]/50 font-medium focus:outline-none"
+          >
+            Loved it
+          </button>
+          <button 
+            type="button" 
+            data-value="Suggest an improvement"
+            class="general-feedback-type-btn py-1.5 px-3 text-xs font-sans border transition-all cursor-pointer text-center border-white/10 text-[#a39b8e] hover:text-[#f5f0e1] hover:border-white/20 bg-transparent focus:outline-none"
+          >
+            Suggest an improvement
+          </button>
+          <button 
+            type="button" 
+            data-value="Something isn't working"
+            class="general-feedback-type-btn py-1.5 px-3 text-xs font-sans border transition-all cursor-pointer text-center border-white/10 text-[#a39b8e] hover:text-[#f5f0e1] hover:border-white/20 bg-transparent focus:outline-none"
+          >
+            Something isn't working
+          </button>
+          <button 
+            type="button" 
+            data-value="Just saying hi"
+            class="general-feedback-type-btn py-1.5 px-3 text-xs font-sans border transition-all cursor-pointer text-center border-white/10 text-[#a39b8e] hover:text-[#f5f0e1] hover:border-white/20 bg-transparent focus:outline-none"
+          >
+            Just saying hi
+          </button>
+          <button 
+            type="button" 
+            data-value="Other"
+            class="general-feedback-type-btn py-1.5 px-3 text-xs font-sans border transition-all cursor-pointer text-center border-white/10 text-[#a39b8e] hover:text-[#f5f0e1] hover:border-white/20 bg-transparent focus:outline-none"
+          >
+            Other
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Message / Thoughts -->
+      <div class="space-y-1.5">
+        <label for="general-feedback-message" class="block text-xs font-sans font-medium text-[#f5f0e1] tracking-wide">
+          Your thoughts <span class="text-[#ff9f1c]">*</span>
+        </label>
+        <textarea 
+          id="general-feedback-message" 
+          name="message" 
+          rows="4" 
+          maxlength="1500"
+          placeholder="Tell us what's on your mind..." 
+          class="w-full bg-white/5 border border-white/10 px-3.5 py-2.5 text-xs sm:text-sm text-[#f5f0e1] placeholder-[#a39b8e]/50 focus:outline-none focus:border-[#ff9f1c] transition-all resize-none leading-relaxed font-sans"
+        ></textarea>
+        <p id="general-error-message" class="hidden text-[11px] text-rose-400 pt-0.5">Please share your thoughts before sending.</p>
+      </div>
+
+      <!-- 3. Name -->
+      <div class="space-y-1.5">
+        <div class="flex items-center justify-between">
+          <label for="general-feedback-name" class="block text-xs font-sans font-medium text-[#f5f0e1] tracking-wide">
+            Your name
+          </label>
+          <span class="text-[#a39b8e]/70 text-[11px] font-sans">Optional</span>
+        </div>
+        <input 
+          type="text" 
+          id="general-feedback-name" 
+          name="name" 
+          maxlength="100"
+          placeholder="Your name" 
+          class="w-full bg-white/5 border border-white/10 px-3.5 py-2.5 text-xs sm:text-sm text-[#f5f0e1] placeholder-[#a39b8e]/50 focus:outline-none focus:border-[#ff9f1c] transition-all font-sans"
+        />
+      </div>
+
+      <!-- Error Alert Banner -->
+      <div id="general-feedback-error-banner" class="hidden text-xs text-rose-300 bg-rose-950/40 border border-rose-500/30 p-3 flex items-start space-x-2">
+        <span id="general-error-banner-text">Couldn't send that right now. Please try again.</span>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="pt-2">
+        <button 
+          type="submit" 
+          id="general-feedback-submit-btn" 
+          class="w-full py-3 px-4 bg-[#ff9f1c] hover:bg-[#ff8f00] text-black font-sans font-medium text-xs sm:text-sm tracking-wide transition-all cursor-pointer shadow-lg active:scale-[0.99] flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span id="general-submit-btn-text">Send it our way</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
