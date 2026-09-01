@@ -7,22 +7,30 @@ import songsData from "../data/songs.json";
     class="glass-pill-header px-3 sm:px-5 py-2.5 flex items-center justify-between gap-2"
   >
     <!-- Minimalist Quiet Wordmark with Custom Icon Image -->
-    <a href="#" class="flex items-center gap-2.5 group shrink-0">
+    <a href="/" class="flex items-center gap-2.5 group shrink-0">
       <div class="w-8 h-8 flex items-center justify-center overflow-hidden">
         <img src="/icon.png" alt="Chatpate Icon" class="w-full h-full object-cover" />
       </div>
-      <span
-        class="font-serif text-lg sm:text-2xl tracking-wider text-[#f5f0e1] group-hover:text-[#ff9f1c] transition-colors"
+      <h1
+        class="font-serif text-lg sm:text-2xl tracking-wider text-[#f5f0e1] group-hover:text-[#ff9f1c] transition-colors m-0 p-0 font-normal"
       >
         Chatpate
-      </span>
+      </h1>
     </a>
 
     <!-- Minimal Header Controls -->
     <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+      <a
+        href="/songs"
+        class="text-xs sm:text-sm font-mono text-[#a39b8e] hover:text-[#f5f0e1] transition-colors px-2.5 sm:px-3 py-1 bg-white/5 hover:bg-white/10"
+        title="View All Songs Catalog"
+      >
+        Catalog
+      </a>
+
       <button
         id="sfx-toggle-btn"
-        class="text-xs sm:text-sm font-mono text-[#a39b8e] hover:text-[#f5f0e1] transition-colors flex items-center gap-1.5 px-2.5 sm:px-3 py-1 bg-white/5 hover:bg-white/10"
+        class="text-xs sm:text-sm font-mono text-[#a39b8e] hover:text-[#f5f0e1] transition-colors flex items-center gap-1.5 px-2.5 sm:px-3 py-1 bg-white/5 hover:bg-white/10 cursor-pointer"
         title="Toggle UI Sound Effects"
       >
         <span id="sfx-icon" class="flex items-center">
@@ -33,10 +41,10 @@ import songsData from "../data/songs.json";
 
       <button
         id="drawer-open-btn"
-        class="text-xs sm:text-sm font-mono text-[#ff9f1c] hover:text-white transition-colors border border-[#ff9f1c]/40 bg-[#ff9f1c]/10 hover:bg-[#ff9f1c]/20 px-3 sm:px-4 py-1 sm:py-1.5 flex items-center gap-1.5"
+        class="text-xs sm:text-sm font-mono text-[#ff9f1c] hover:text-white transition-colors bg-[#ff9f1c]/20 hover:bg-[#ff9f1c]/35 px-3 sm:px-4 py-1 sm:py-1.5 flex items-center gap-1.5 cursor-pointer"
       >
         <span>Queue</span>
-        <span class="text-xs text-[#a39b8e]" id="header-song-count">{songsData.length}</span>
+        <span class="text-xs text-[#a39b8e] bg-black/40 px-1.5 py-0.5" id="header-song-count">{songsData.length}</span>
       </button>
     </div>
   </div>

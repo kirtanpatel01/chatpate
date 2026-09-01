@@ -77,16 +77,17 @@ import songsData from "../data/songs.json";
         <button
           type="button"
           id="open-suggestion-btn"
-          class="flex items-center gap-1.5 text-xs font-sans text-[#f5f0e1] border border-white/10 hover:border-[#ff9f1c]/50 bg-white/5 hover:bg-white/10 px-3.5 py-2 transition-all cursor-pointer"
+          class="flex items-center gap-1.5 text-xs font-sans text-[#f5f0e1] bg-white/10 hover:bg-[#ff9f1c]/25 hover:text-[#ff9f1c] px-3.5 py-2 transition-all cursor-pointer"
         >
           <span>+ Suggest a Song</span>
         </button>
         <button
           type="button"
           id="open-feedback-btn"
-          class="flex items-center gap-1.5 text-xs font-sans text-[#f5f0e1] border border-white/10 hover:border-[#ff9f1c]/50 bg-white/5 hover:bg-white/10 px-3.5 py-2 transition-all cursor-pointer"
+          class="flex items-center gap-1.5 text-xs font-sans text-[#f5f0e1] bg-white/10 hover:bg-[#ff9f1c]/25 hover:text-[#ff9f1c] px-3.5 py-2 transition-all cursor-pointer"
         >
-          <span>💬 Leave a note</span>
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+          <span>Leave a note</span>
         </button>
       </div>
     </div>
@@ -97,7 +98,38 @@ import songsData from "../data/songs.json";
     let player = null;
     let isPlayerReady = false;
     let isPlaying = false;
-    let currentSongIndex = 0;
+    
+    // Check URL query param ?play=SONG_ID
+    const urlParams = new URLSearchParams(window.location.search);
+    const playParamId = urlParams.get("play");
+
+    // Restore last played song & playback position from localStorage
+    const savedSongId = localStorage.getItem("chatpate_last_song_id");
+    const savedSongIdxRaw = localStorage.getItem("chatpate_last_song_index");
+    let initialIndex = 0;
+    let savedTime = 0;
+
+    if (playParamId) {
+      const playIdx = songsData.findIndex((s) => s.id === playParamId);
+      if (playIdx !== -1) {
+        initialIndex = playIdx;
+      }
+    } else if (savedSongId) {
+      const foundIdx = songsData.findIndex((s) => s.id === savedSongId);
+      if (foundIdx !== -1) {
+        initialIndex = foundIdx;
+        savedTime = parseFloat(localStorage.getItem("chatpate_last_playback_time") || "0");
+      }
+    } else if (savedSongIdxRaw !== null) {
+      const parsed = parseInt(savedSongIdxRaw, 10);
+      if (!isNaN(parsed) && parsed >= 0 && parsed < songsData.length) {
+        initialIndex = parsed;
+        savedTime = parseFloat(localStorage.getItem("chatpate_last_playback_time") || "0");
+      }
+    }
+    let currentSongIndex = initialIndex;
+    if (isNaN(savedTime) || savedTime < 0) savedTime = 0;
+
     let isShuffle = false;
     let isRepeat = false;
     let isMuted = false;
@@ -141,16 +173,18 @@ import songsData from "../data/songs.json";
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
     window.onYouTubeIframeAPIReady = () => {
+      const initialSong = songsData[currentSongIndex] || songsData[0];
       player = new YT.Player("yt-player-iframe", {
         height: "100%",
         width: "100%",
-        videoId: songsData[0]?.id || "5RT6QMKJTjQ",
+        videoId: initialSong?.id || "5RT6QMKJTjQ",
         playerVars: {
           playsinline: 1,
           autoplay: 0,
           controls: 1,
           rel: 0,
           modestbranding: 1,
+          start: Math.floor(savedTime),
         },
         events: {
           onReady: onPlayerReady,
@@ -162,6 +196,11 @@ import songsData from "../data/songs.json";
 
     function onPlayerReady(event) {
       isPlayerReady = true;
+      if (savedTime > 0 && player && player.seekTo) {
+        try {
+          player.seekTo(savedTime, true);
+        } catch (e) {}
+      }
       updateUI();
       startProgressTimer();
     }
@@ -199,6 +238,11 @@ import songsData from "../data/songs.json";
       if (index < 0 || index >= songsData.length) return;
       currentSongIndex = index;
       const song = songsData[currentSongIndex];
+
+      savedTime = 0;
+      localStorage.setItem("chatpate_last_song_index", currentSongIndex);
+      localStorage.setItem("chatpate_last_song_id", song.id);
+      localStorage.setItem("chatpate_last_playback_time", "0");
 
       const fallbackView = document.getElementById("player-fallback-view");
       if (fallbackView) {
@@ -264,6 +308,14 @@ import songsData from "../data/songs.json";
             : `<svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
         }
       });
+      const drawerPlayIcons = document.querySelectorAll("#drawer-play-icon");
+      drawerPlayIcons.forEach((icon) => {
+        if (icon) {
+          icon.innerHTML = isPlaying
+            ? `<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`
+            : `<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+        }
+      });
     }
 
     function updateUI() {
@@ -284,14 +336,56 @@ import songsData from "../data/songs.json";
       if (upNextEl && upNextSong)
         upNextEl.innerText = `${upNextSong.title} — ${upNextSong.artist}`;
 
-      document.querySelectorAll(".drawer-song-item").forEach((item) => {
+      const drawerSrEl = document.getElementById("drawer-current-sr");
+      const drawerBottomTitle = document.getElementById("drawer-bottom-song-title");
+      const drawerBottomArtist = document.getElementById("drawer-bottom-song-artist");
+      const drawerBottomThumb = document.getElementById("drawer-bottom-song-thumb");
+
+      if (drawerSrEl) drawerSrEl.innerText = `${currentSongIndex + 1} of ${songsData.length}`;
+      if (drawerBottomTitle) drawerBottomTitle.innerText = song.title;
+      if (drawerBottomArtist) drawerBottomArtist.innerText = song.artist;
+      if (drawerBottomThumb && song.id) {
+        drawerBottomThumb.src = `https://img.youtube.com/vi/${song.id}/mqdefault.jpg`;
+      }
+
+      document.querySelectorAll(".drawer-song-item, .queue-song-item").forEach((item) => {
         const itemId = item.getAttribute("data-song-id");
+        const titleText = item.querySelector(".drawer-title-text, h4");
+        const playingBadge = item.querySelector(".now-playing-badge");
         if (itemId === song.id) {
-          item.classList.add("bg-white/10", "border-[#ff9f1c]/40");
+          item.classList.add("bg-[#ff9f1c]/25", "shadow-lg");
+          item.classList.remove("bg-[#150f24]", "bg-white/[0.03]");
+          if (titleText) {
+            titleText.classList.add("text-[#ff9f1c]", "font-bold");
+            titleText.classList.remove("text-[#f5f0e1]", "text-slate-200");
+          }
+          if (playingBadge) {
+            playingBadge.classList.remove("hidden");
+            playingBadge.classList.add("inline-block");
+          }
         } else {
-          item.classList.remove("bg-white/10", "border-[#ff9f1c]/40");
+          item.classList.remove("bg-[#ff9f1c]/25", "shadow-lg");
+          if (item.classList.contains("drawer-song-item")) {
+            item.classList.add("bg-[#150f24]");
+          } else {
+            item.classList.add("bg-white/[0.03]");
+          }
+          if (titleText) {
+            titleText.classList.remove("text-[#ff9f1c]", "font-bold");
+            titleText.classList.add("text-[#f5f0e1]");
+          }
+          if (playingBadge) {
+            playingBadge.classList.add("hidden");
+            playingBadge.classList.remove("inline-block");
+          }
         }
       });
+    }
+
+    function updateSliderFill(slider, percent) {
+      if (!slider) return;
+      const val = Math.min(100, Math.max(0, percent));
+      slider.style.background = `linear-gradient(to right, #ff9f1c 0%, #ff9f1c ${val}%, rgba(245, 240, 225, 0.15) ${val}%, rgba(245, 240, 225, 0.15) 100%)`;
     }
 
     function startProgressTimer() {
@@ -302,9 +396,21 @@ import songsData from "../data/songs.json";
           const slider = document.getElementById("player-seek-slider");
           const timeCur = document.getElementById("player-current-time");
           const timeTot = document.getElementById("player-total-duration");
-          if (slider && total > 0) slider.value = (current / total) * 100;
+          if (slider && total > 0) {
+            const percent = (current / total) * 100;
+            slider.value = percent;
+            updateSliderFill(slider, percent);
+          }
           if (timeCur) timeCur.innerText = formatTime(current);
           if (timeTot) timeTot.innerText = formatTime(total);
+
+          if (current > 0) {
+            localStorage.setItem("chatpate_last_playback_time", current.toFixed(2));
+            localStorage.setItem("chatpate_last_song_index", currentSongIndex);
+            if (songsData[currentSongIndex]) {
+              localStorage.setItem("chatpate_last_song_id", songsData[currentSongIndex].id);
+            }
+          }
         }
       }, 500);
     }
@@ -316,6 +422,29 @@ import songsData from "../data/songs.json";
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+      const seekSlider = document.getElementById("player-seek-slider");
+      if (seekSlider) updateSliderFill(seekSlider, 0);
+
+      const volSlider = document.getElementById("player-volume-slider");
+      if (volSlider) {
+        updateSliderFill(volSlider, volSlider.value);
+        volSlider.addEventListener("input", (e) => {
+          updateSliderFill(volSlider, e.target.value);
+          if (isPlayerReady && player && player.setVolume) {
+            player.setVolume(e.target.value);
+          }
+        });
+      }
+
+      seekSlider?.addEventListener("input", (e) => {
+        const val = e.target.value;
+        updateSliderFill(seekSlider, val);
+        if (isPlayerReady && player && player.getDuration) {
+          const seekTo = (val / 100) * player.getDuration();
+          player.seekTo(seekTo, true);
+        }
+      });
+
       document
         .getElementById("player-play-toggle-btn")
         ?.addEventListener("click", () => {
@@ -326,7 +455,19 @@ import songsData from "../data/songs.json";
         });
 
       document
+        .getElementById("drawer-bottom-play-btn")
+        ?.addEventListener("click", () => {
+          document.getElementById("player-play-toggle-btn")?.click();
+        });
+
+      document
         .getElementById("player-next-btn")
+        ?.addEventListener("click", () => {
+          playSFX("click");
+          playNextTrack();
+        });
+      document
+        .getElementById("drawer-bottom-next-btn")
         ?.addEventListener("click", () => {
           playSFX("click");
           playNextTrack();
@@ -355,15 +496,6 @@ import songsData from "../data/songs.json";
           document
             .getElementById("repeat-indicator")
             ?.classList.toggle("hidden", !isRepeat);
-        });
-
-      document
-        .getElementById("player-seek-slider")
-        ?.addEventListener("input", (e) => {
-          if (isPlayerReady && player && player.getDuration) {
-            const seekTo = (e.target.value / 100) * player.getDuration();
-            player.seekTo(seekTo, true);
-          }
         });
 
       document
@@ -530,6 +662,19 @@ import songsData from "../data/songs.json";
           openDrawer();
         } else if (e.key === "Escape") {
           closeDrawer();
+        }
+      });
+
+      window.addEventListener("beforeunload", () => {
+        if (isPlayerReady && player && player.getCurrentTime) {
+          try {
+            const cur = player.getCurrentTime() || 0;
+            localStorage.setItem("chatpate_last_playback_time", cur.toFixed(2));
+            localStorage.setItem("chatpate_last_song_index", currentSongIndex);
+            if (songsData[currentSongIndex]) {
+              localStorage.setItem("chatpate_last_song_id", songsData[currentSongIndex].id);
+            }
+          } catch (e) {}
         }
       });
     });

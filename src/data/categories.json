@@ -3,36 +3,36 @@
     "id": "all",
     "name": "Sab Kuch",
     "tagline": "Sabhi 80+ high-voltage bangers ek saath",
-    "badge": "🔥 Full Catalog"
+    "badge": "Full Catalog"
   },
   {
     "id": "full-power",
     "name": "Full Power",
     "tagline": "Volume 100%, bass maximum, zero regrets",
-    "badge": "⚡ High Energy"
+    "badge": "High Energy"
   },
   {
     "id": "bollywood-masti",
     "name": "Bollywood Masti",
-    "tagline": "Pure 2010s retro nostalgia & filmy drama",
-    "badge": "💃 Filmy Vibes"
+    "tagline": "Pure retro nostalgia & filmy drama",
+    "badge": "Filmy Vibes"
   },
   {
     "id": "desi-dance",
     "name": "Desi Dance",
     "tagline": "Wedding, sangeet, aur dhol beats that hit hard",
-    "badge": "🥁 Dhol & Beats"
+    "badge": "Dhol & Beats"
   },
   {
     "id": "road-trip",
     "name": "Road Trip",
     "tagline": "Windows down, speaker full, driving with friends",
-    "badge": "🚗 Car Playlist"
+    "badge": "Car Playlist"
   },
   {
     "id": "nostalgia",
     "name": "Nostalgia Banger",
     "tagline": "Classics recreated with modern energy",
-    "badge": "📻 Recreated Magic"
+    "badge": "Recreated Magic"
   }
 ]

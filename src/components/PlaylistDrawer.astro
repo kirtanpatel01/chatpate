@@ -1,21 +1,22 @@
 ---
 import songsData from '../data/songs.json';
+const sortedSongs = [...songsData].sort((a, b) => a.title.localeCompare(b.title));
 ---
 
-<div id="drawer-backdrop" class="fixed inset-0 bg-black/80 backdrop-blur-md z-40 hidden opacity-0 transition-opacity duration-300"></div>
+<div id="drawer-backdrop" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300"></div>
 
 <aside
   id="playlist-drawer"
-  class="fixed top-0 right-0 w-full max-w-[440px] h-full bg-[#07050a]/95 border-l border-white/10 z-50 transform translate-x-full transition-transform duration-300 ease-out flex flex-col justify-between"
+  class="fixed top-0 right-0 w-full max-w-[440px] h-full bg-[#0d0918]/98 border-l border-white/10 z-50 transform translate-x-full transition-transform duration-300 ease-out flex flex-col justify-between"
 >
   <!-- Drawer Header -->
-  <div class="p-6 border-b border-white/10 space-y-4 shrink-0 bg-[#09070e]">
+  <div class="p-6 space-y-4 shrink-0 bg-[#160f26] border-b border-white/10">
     <div class="flex items-center justify-between">
       <div>
         <h3 class="font-serif text-xl text-[#f5f0e1]">Song Catalog</h3>
         <p class="text-xs text-[#a39b8e] font-mono"><span id="drawer-count">{songsData.length}</span> Tracks Curated</p>
       </div>
-      <button id="drawer-close-btn" class="text-[#a39b8e] hover:text-white text-xl">✕</button>
+      <button id="drawer-close-btn" class="text-[#a39b8e] hover:text-white text-xl cursor-pointer">✕</button>
     </div>
 
     <!-- Search Input -->
@@ -24,24 +25,24 @@ import songsData from '../data/songs.json';
         type="text"
         id="drawer-search-input"
         placeholder="Search tracks..."
-        class="w-full bg-[#07050a] border border-white/10 px-4 py-2.5 text-sm text-[#f5f0e1] focus:outline-none focus:border-[#ff9f1c] placeholder:text-[#a39b8e]/50 font-sans"
+        class="w-full bg-[#0a0712] border border-white/10 focus:border-[#ff9f1c]/40 focus:bg-[#1f1636] px-4 py-2.5 text-sm text-[#f5f0e1] focus:outline-none placeholder:text-[#a39b8e]/50 font-sans transition-all"
       />
     </div>
   </div>
 
   <!-- Songs List Container (Visual Browser Rows with Singer Names and Exclude Toggle) -->
   <div id="drawer-songs-list" class="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
-    {songsData.map((song, idx) => (
+    {sortedSongs.map((song, idx) => (
       <div
         data-song-id={song.id}
         data-song-title={song.title}
         data-song-artist={song.artist}
         data-drawer-index={idx}
-        class="drawer-song-item p-2.5 flex items-center justify-between gap-3 group cursor-pointer border border-white/5 bg-white/[0.02] hover:border-white/20 hover:bg-white/5 transition-all relative overflow-hidden"
+        class="drawer-song-item p-2.5 flex items-center justify-between gap-3 group cursor-pointer bg-[#150f24] hover:bg-[#201738] transition-all relative overflow-hidden"
       >
         <div class="flex items-center gap-3 overflow-hidden">
           <!-- Track Thumbnail Visual -->
-          <div class="relative w-12 h-12 shrink-0 overflow-hidden bg-black/60 border border-white/10 flex items-center justify-center">
+          <div class="relative w-12 h-12 shrink-0 overflow-hidden bg-black/60 flex items-center justify-center">
             <img
               src={`https://img.youtube.com/vi/${song.id}/mqdefault.jpg`}
               alt={song.title}
@@ -55,9 +56,12 @@ import songsData from '../data/songs.json';
 
           <!-- Song Title & Singer Name -->
           <div class="truncate space-y-0.5">
-            <p class="drawer-title-text font-sans font-medium text-sm text-[#f5f0e1] group-hover:text-[#ff9f1c] truncate transition-colors">
-              {song.title}
-            </p>
+            <div class="flex items-center gap-2">
+              <p class="drawer-title-text font-sans font-medium text-sm text-[#f5f0e1] group-hover:text-[#ff9f1c] truncate transition-colors">
+                {song.title}
+              </p>
+              <span class="now-playing-badge hidden text-[9px] font-mono font-bold bg-[#ff9f1c] text-black px-1.5 py-0.5 uppercase tracking-wider shrink-0">PLAYING</span>
+            </div>
             <p class="text-xs font-sans text-[#a39b8e] truncate">
               {song.artist}
             </p>
@@ -68,7 +72,7 @@ import songsData from '../data/songs.json';
         <button
           type="button"
           data-exclude-id={song.id}
-          class="exclude-toggle-btn shrink-0 p-1.5 text-xs text-[#a39b8e] hover:text-[#ff9f1c] hover:bg-white/10 transition-all"
+          class="exclude-toggle-btn shrink-0 p-1.5 text-xs text-[#a39b8e] hover:text-[#ff9f1c] hover:bg-white/10 transition-all cursor-pointer"
           title="Exclude from playback"
           onclick="event.stopPropagation();"
         >
@@ -76,5 +80,77 @@ import songsData from '../data/songs.json';
         </button>
       </div>
     ))}
+  </div>
+
+  <!-- Fixed Bottom Controls & Song Status (2 Fixed Rows) -->
+  <div class="shrink-0 bg-[#160f26] p-4 space-y-3 border-t border-white/10">
+    <!-- Row 1: Left = SR No (e.g. 1 of 86), Right = Tooltip trigger for circle exclude icon -->
+    <div class="flex items-center justify-between text-xs font-mono">
+      <div class="flex items-center gap-1.5 text-[#a39b8e]">
+        <span>Current:</span>
+        <span id="drawer-current-sr" class="text-[#ff9f1c] font-bold">1 of {songsData.length}</span>
+      </div>
+
+      <div class="relative group cursor-pointer inline-flex items-center gap-1 text-[11px] text-[#a39b8e] hover:text-[#f5f0e1]">
+        <svg class="w-3.5 h-3.5 fill-current text-[#ff9f1c]" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+        <span class="underline underline-offset-2">Icon Info</span>
+
+        <!-- Tooltip content on hover -->
+        <div class="absolute right-0 bottom-full mb-2.5 w-60 p-3 bg-[#1f1636] text-[#f5f0e1] text-[11px] leading-relaxed rounded-lg shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
+          <p class="font-bold text-[#ff9f1c] mb-1 flex items-center gap-1"><svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-4.42-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm5.31-3.1L6.1 5.69C7.45 4.63 9.15 4 12 4c4.42 0 8 4.42 8 8 0 1.85-.63 3.55-1.69 4.9z"/></svg><span>Exclude Toggle</span></p>
+          The circle icons on the right allow you to skip or exclude specific songs from playback during shuffle.
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: Currently Playing Song Details & Transport Controls -->
+    <div class="flex items-center justify-between gap-3 bg-[#0a0712] p-2 rounded-lg">
+      <!-- Left Side: Song Thumbnail & Title/Artist -->
+      <div class="flex items-center gap-2.5 overflow-hidden">
+        <img
+          id="drawer-bottom-song-thumb"
+          src={`https://img.youtube.com/vi/${songsData[0]?.id}/mqdefault.jpg`}
+          alt="Currently Playing Song Thumbnail"
+          class="w-10 h-10 object-cover rounded shrink-0 bg-black/60"
+        />
+
+        <div class="truncate">
+          <p id="drawer-bottom-song-title" class="font-sans font-medium text-xs text-[#f5f0e1] truncate">
+            Select a song
+          </p>
+          <p id="drawer-bottom-song-artist" class="text-[11px] font-sans text-[#a39b8e] truncate">
+            Chatpate Bollywood
+          </p>
+        </div>
+      </div>
+
+      <!-- Right Side: Control Icons (Only Icon, No BG) & NOW PLAYING text -->
+      <div class="flex items-center gap-2 shrink-0">
+        <!-- Play / Pause Icon -->
+        <button
+          id="drawer-bottom-play-btn"
+          type="button"
+          class="text-[#f5f0e1] hover:text-[#ff9f1c] bg-transparent transition-colors p-1 cursor-pointer active:scale-95 flex items-center justify-center"
+          title="Play / Pause"
+        >
+          <span id="drawer-play-icon" class="flex items-center justify-center pointer-events-none">
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+        </button>
+
+        <!-- Next Track Icon -->
+        <button
+          id="drawer-bottom-next-btn"
+          type="button"
+          class="text-[#a39b8e] hover:text-[#f5f0e1] bg-transparent transition-colors p-1 cursor-pointer active:scale-95 flex items-center justify-center"
+          title="Next Track"
+        >
+          <svg class="w-4 h-4 fill-current pointer-events-none" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+        </button>
+
+        <!-- NOW PLAYING Badge -->
+        <span class="text-[9px] font-mono font-bold text-[#ff9f1c] bg-[#ff9f1c]/15 px-1.5 py-0.5 rounded tracking-wider uppercase">NOW PLAYING</span>
+      </div>
+    </div>
   </div>
 </aside>

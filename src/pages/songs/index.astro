@@ -1,0 +1,107 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import Header from "../../components/Header.astro";
+import songsData from "../../data/songs.json";
+import { getSongSlug } from "../../utils/slugify";
+
+const sortedSongs = [...songsData].sort((a, b) => a.title.localeCompare(b.title));
+const siteUrl = Astro.site ? Astro.site.href.replace(/\/$/, '') : 'https://chatpate.kjpatel.me';
+
+const playlistSchema = {
+  "@context": "https://schema.org",
+  "@type": "MusicPlaylist",
+  "name": "Chatpate Bollywood & Desi Music Catalog",
+  "numTracks": sortedSongs.length,
+  "description": "Complete curated index of Bollywood bangers, party tracks, and desi nostalgia.",
+  "url": `${siteUrl}/songs`,
+  "track": sortedSongs.map((song) => ({
+    "@type": "MusicRecording",
+    "name": song.title,
+    "byArtist": {
+      "@type": "MusicGroup",
+      "name": song.artist
+    },
+    "url": `${siteUrl}/songs/${getSongSlug(song)}`,
+    "image": `https://img.youtube.com/vi/${song.id}/hqdefault.jpg`
+  }))
+};
+---
+
+<MainLayout
+  title="All Songs Catalog — Chatpate Bollywood & Desi Music"
+  description="Explore the complete track library of Bollywood party bangers, wedding anthems, and road trip songs on Chatpate."
+  canonical={`${siteUrl}/songs`}
+  schemaData={playlistSchema}
+>
+  <Header />
+
+  <main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10 z-10">
+    <!-- Header Title Section -->
+    <div class="glass-console p-6 sm:p-8 rounded-2xl mb-8 space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-mono font-bold tracking-widest text-[#ff9f1c] uppercase block mb-1">
+            Complete Track Index
+          </span>
+          <h2 class="font-serif text-3xl sm:text-4xl text-[#f5f0e1] tracking-wide">
+            Song Catalog
+          </h2>
+        </div>
+        <div class="text-right font-mono text-xs sm:text-sm text-[#a39b8e] bg-white/5 px-4 py-2 rounded-lg border border-white/10">
+          <span class="text-[#ff9f1c] font-bold">{sortedSongs.length}</span> Curated Bangers
+        </div>
+      </div>
+      <p class="font-sans text-sm sm:text-base text-[#a39b8e] max-w-2xl">
+        Browse the complete collection of handpicked Bollywood hits, party anthems, and nostalgic classics. Click any track to view lyrics & details, or launch it directly in the player.
+      </p>
+    </div>
+
+    <!-- Song List Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {sortedSongs.map((song, idx) => {
+        const slug = getSongSlug(song);
+        return (
+          <article class="glass-console p-4 rounded-xl flex items-center justify-between gap-3 group hover:border-[#ff9f1c]/40 transition-all">
+            <div class="flex items-center gap-3.5 overflow-hidden">
+              <span class="font-mono text-xs text-[#a39b8e] w-6 shrink-0 text-right">
+                {String(idx + 1).padStart(2, '0')}
+              </span>
+              <img
+                src={`https://img.youtube.com/vi/${song.id}/mqdefault.jpg`}
+                alt={`${song.title} by ${song.artist}`}
+                class="w-12 h-12 rounded-lg object-cover shrink-0 bg-black/60"
+                loading="lazy"
+                width="48"
+                height="48"
+              />
+              <div class="truncate">
+                <a
+                  href={`/songs/${slug}`}
+                  class="font-sans font-medium text-sm text-[#f5f0e1] group-hover:text-[#ff9f1c] truncate block transition-colors"
+                >
+                  {song.title}
+                </a>
+                <p class="font-sans text-xs text-[#a39b8e] truncate mt-0.5">
+                  {song.artist}
+                </p>
+              </div>
+            </div>
+
+            <a
+              href={`/?play=${song.id}`}
+              class="shrink-0 p-2 text-[#ff9f1c] hover:bg-[#ff9f1c]/20 transition-all cursor-pointer rounded-lg"
+              title={`Play ${song.title}`}
+            >
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </a>
+          </article>
+        );
+      })}
+    </div>
+  </main>
+
+  <!-- Footer Navigation -->
+  <footer class="w-full py-6 px-4 shrink-0 text-center text-xs font-mono text-[#a39b8e]">
+    <a href="/" class="hover:text-[#ff9f1c] transition-colors">← Return to Player</a>
+  </footer>
+</MainLayout>

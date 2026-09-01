@@ -1,0 +1,159 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import Header from "../../components/Header.astro";
+import songsData from "../../data/songs.json";
+import { getSongSlug, type SongItem } from "../../utils/slugify";
+
+export async function getStaticPaths() {
+  return songsData.map((song: SongItem) => ({
+    params: { slug: getSongSlug(song) },
+    props: { song }
+  }));
+}
+
+const { song } = Astro.props as { song: SongItem };
+const slug = getSongSlug(song);
+const siteUrl = Astro.site ? Astro.site.href.replace(/\/$/, '') : 'https://chatpate.kjpatel.me';
+const pageUrl = `${siteUrl}/songs/${slug}`;
+const artworkUrl = `https://img.youtube.com/vi/${song.id}/hqdefault.jpg`;
+
+const songIndex = songsData.findIndex((s) => s.id === song.id);
+const prevSong = songsData[(songIndex - 1 + songsData.length) % songsData.length];
+const nextSong = songsData[(songIndex + 1) % songsData.length];
+
+const songSchema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "MusicRecording",
+    "name": song.title,
+    "byArtist": {
+      "@type": "MusicGroup",
+      "name": song.artist
+    },
+    "image": artworkUrl,
+    "url": pageUrl,
+    "inPlaylist": {
+      "@type": "MusicPlaylist",
+      "name": "Chatpate Bollywood Collection",
+      "url": `${siteUrl}/songs`
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": siteUrl
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Catalog",
+        "item": `${siteUrl}/songs`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": song.title,
+        "item": pageUrl
+      }
+    ]
+  }
+];
+---
+
+<MainLayout
+  title={`${song.title} by ${song.artist} — Chatpate Music`}
+  description={`Listen to ${song.title} by ${song.artist} on Chatpate. Curated Bollywood party banger and high-energy desi track.`}
+  image={artworkUrl}
+  canonical={pageUrl}
+  type="music.song"
+  schemaData={songSchema}
+>
+  <Header />
+
+  <main class="flex-1 w-full max-w-3xl mx-auto px-4 py-8 sm:py-12 z-10">
+    <!-- Breadcrumb Trail -->
+    <nav aria-label="Breadcrumb" class="mb-6">
+      <ol class="flex items-center gap-2 text-xs font-mono text-[#a39b8e]">
+        <li><a href="/" class="hover:text-[#ff9f1c] transition-colors">Home</a></li>
+        <li>/</li>
+        <li><a href="/songs" class="hover:text-[#ff9f1c] transition-colors">Catalog</a></li>
+        <li>/</li>
+        <li class="text-[#f5f0e1] truncate max-w-[180px] sm:max-w-xs">{song.title}</li>
+      </ol>
+    </nav>
+
+    <!-- Song Detail Card -->
+    <article class="glass-console p-6 sm:p-8 rounded-2xl space-y-6">
+      <div class="flex flex-col sm:flex-row items-center gap-6">
+        <!-- Track Artwork -->
+        <div class="w-full sm:w-48 aspect-video sm:aspect-square rounded-xl overflow-hidden shadow-2xl bg-black/80 shrink-0 border border-white/10 relative">
+          <img
+            src={artworkUrl}
+            alt={`${song.title} artwork`}
+            class="w-full h-full object-cover"
+            width="320"
+            height="320"
+          />
+          <div class="absolute bottom-2 left-2 bg-black/80 px-2 py-0.5 text-[10px] font-mono text-[#ff9f1c] rounded">
+            Track #{song.trackNumber || String(songIndex + 1).padStart(2, '0')}
+          </div>
+        </div>
+
+        <!-- Song Metadata & Heading -->
+        <div class="space-y-3 text-center sm:text-left overflow-hidden w-full">
+          <span class="text-xs font-mono font-bold tracking-widest text-[#ff9f1c] uppercase block">
+            BOLLYWOOD & DESI BANGER
+          </span>
+          <h2 class="font-serif text-3xl sm:text-4xl text-[#f5f0e1] tracking-wide leading-tight">
+            {song.title}
+          </h2>
+          <p class="font-sans text-lg text-[#a39b8e]">
+            {song.artist}
+          </p>
+
+          <!-- Primary Play Action Button -->
+          <div class="pt-3 flex flex-wrap items-center justify-center sm:justify-start gap-3">
+            <a
+              href={`/?play=${song.id}`}
+              class="editorial-btn-accent px-6 py-3 rounded-xl text-sm font-heading flex items-center gap-2.5 shadow-lg shadow-[#ff007f]/20 hover:shadow-[#ff007f]/40 transition-all"
+            >
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              <span>PLAY IN CHATPATE CONSOLE</span>
+            </a>
+            <a
+              href="/songs"
+              class="px-4 py-3 rounded-xl text-xs font-mono text-[#a39b8e] hover:text-[#f5f0e1] bg-white/5 hover:bg-white/10 transition-colors"
+            >
+              All Songs Catalog
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Adjacent Track Navigation -->
+      <div class="pt-6 border-t border-white/10 flex items-center justify-between gap-4 text-xs font-mono">
+        <a
+          href={`/songs/${getSongSlug(prevSong)}`}
+          class="flex items-center gap-1.5 text-[#a39b8e] hover:text-[#ff9f1c] transition-colors truncate max-w-[45%]"
+          title={`Previous: ${prevSong.title}`}
+        >
+          <span>←</span>
+          <span class="truncate">{prevSong.title}</span>
+        </a>
+        <a
+          href={`/songs/${getSongSlug(nextSong)}`}
+          class="flex items-center gap-1.5 text-[#a39b8e] hover:text-[#ff9f1c] transition-colors truncate max-w-[45%]"
+          title={`Next: ${nextSong.title}`}
+        >
+          <span class="truncate">{nextSong.title}</span>
+          <span>→</span>
+        </a>
+      </div>
+    </article>
+  </main>
+</MainLayout>
