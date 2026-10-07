@@ -61,7 +61,11 @@ const playlistSchema = {
       {sortedSongs.map((song, idx) => {
         const slug = getSongSlug(song);
         return (
-          <article class="glass-console p-4 rounded-xl flex items-center justify-between gap-3 group hover:border-[#ff9f1c]/40 transition-all">
+          <article
+            data-song-id={song.id}
+            data-song-index={idx}
+            class="catalog-song-row glass-console p-4 rounded-xl flex items-center justify-between gap-3 group hover:border-[#ff9f1c]/40 transition-all"
+          >
             <div class="flex items-center gap-3.5 overflow-hidden">
               <span class="font-mono text-xs text-[#a39b8e] w-6 shrink-0 text-right">
                 {String(idx + 1).padStart(2, '0')}
@@ -75,25 +79,30 @@ const playlistSchema = {
                 height="48"
               />
               <div class="truncate">
-                <a
-                  href={`/songs/${slug}`}
-                  class="font-sans font-medium text-sm text-[#f5f0e1] group-hover:text-[#ff9f1c] truncate block transition-colors"
-                >
-                  {song.title}
-                </a>
+                <div class="flex items-center gap-1.5 overflow-hidden">
+                  <a
+                    href={`/songs/${slug}`}
+                    class="catalog-title-text font-sans font-medium text-sm text-[#f5f0e1] group-hover:text-[#ff9f1c] truncate transition-colors"
+                  >
+                    {song.title}
+                  </a>
+                  <span class="now-playing-badge hidden text-[9px] font-mono font-bold bg-[#ff9f1c] text-black px-1.5 py-0.5 uppercase tracking-wider shrink-0">PLAYING</span>
+                </div>
                 <p class="font-sans text-xs text-[#a39b8e] truncate mt-0.5">
                   {song.artist}
                 </p>
               </div>
             </div>
 
-            <a
-              href={`/?play=${song.id}`}
-              class="shrink-0 p-2 text-[#ff9f1c] hover:bg-[#ff9f1c]/20 transition-all cursor-pointer rounded-lg"
+            <button
+              type="button"
+              data-song-id={song.id}
+              data-song-index={idx}
+              class="catalog-play-btn shrink-0 p-2 text-[#ff9f1c] hover:bg-[#ff9f1c]/25 transition-all cursor-pointer rounded-lg"
               title={`Play ${song.title}`}
             >
-              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            </a>
+              <svg class="w-4 h-4 fill-current pointer-events-none" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
           </article>
         );
       })}

@@ -38,7 +38,12 @@ import songsData from "../data/songs.json";
     id="player-frame-container"
     class="w-full aspect-video overflow-hidden bg-black/90 border border-white/10 relative shadow-2xl group transition-all duration-300"
   >
-    <div id="yt-player-iframe" class="w-full h-full"></div>
+    <img
+      id="player-main-artwork"
+      src="/bg.png"
+      alt="Song Artwork"
+      class="w-full h-full object-cover transition-all duration-300"
+    />
 
     <!-- Error Fallback Banner View -->
     <div

@@ -1,4 +1,6 @@
 ---
+import { ClientRouter } from 'astro:transitions';
+import songsData from '../data/songs.json';
 import '../styles/global.css';
 
 interface Props {
@@ -14,7 +16,7 @@ interface Props {
 const {
   title = "Chatpate — Bollywood & Desi Music Player",
   description = "Listen to curated Bollywood party bangers, Hindi pop hits, and high-energy desi tracks in an intimate web music player.",
-  image = "/bg.png",
+  image = "/og.png",
   canonical,
   noindex = false,
   type = "website",
@@ -31,7 +33,8 @@ const defaultSchema = [
     "@type": "WebSite",
     "name": "Chatpate",
     "url": siteUrl,
-    "description": description
+    "description": description,
+    "image": ogImageURL
   },
   {
     "@context": "https://schema.org",
@@ -41,7 +44,8 @@ const defaultSchema = [
     "applicationCategory": "MultimediaApplication",
     "operatingSystem": "All",
     "browserRequirements": "Requires JavaScript. Requires HTML5.",
-    "description": description
+    "description": description,
+    "image": ogImageURL
   }
 ];
 
@@ -57,6 +61,7 @@ const mergedSchema = schemaData
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <ClientRouter />
     
     <link rel="icon" type="image/png" href="/icon.png" />
     <link rel="shortcut icon" href="/icon.png" />
@@ -149,5 +154,436 @@ const mergedSchema = schemaData
     <div class="relative z-10 h-full flex flex-col justify-between overflow-y-auto custom-scrollbar">
       <slot />
     </div>
+
+    <!-- Global Persistent Audio Player Engine (Stays Playing Across Navigation) -->
+    <div
+      id="global-audio-engine"
+      class="fixed -bottom-96 -right-96 w-1 h-1 overflow-hidden pointer-events-none opacity-0 select-none z-[-1]"
+      transition:persist="chatpate-audio-engine"
+    >
+      <div id="yt-player-iframe"></div>
+    </div>
+
+    <!-- Persistent Floating Mini-Player Bar (Visible Across All Pages) -->
+    <div
+      id="global-mini-player-bar"
+      class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-40 transition-all duration-300"
+      transition:persist="chatpate-mini-player-bar"
+    >
+      <div class="glass-console p-2.5 rounded-2xl flex items-center justify-between gap-3 shadow-2xl border border-white/15">
+        <!-- Clickable Song Details (Redirects to Main Player) -->
+        <a href="/" class="flex items-center gap-3 overflow-hidden group flex-1" title="Open Main Player Console">
+          <img
+            id="mini-player-thumb"
+            src="/icon.png"
+            alt="Now Playing Thumbnail"
+            class="w-10 h-10 rounded-lg object-cover shrink-0 bg-black/60 group-hover:scale-105 transition-transform"
+          />
+          <div class="truncate">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-[#ff9f1c] animate-pulse shrink-0"></span>
+              <p id="mini-player-title" class="font-serif text-sm text-[#f5f0e1] group-hover:text-[#ff9f1c] truncate transition-colors">
+                Select a song to listen
+              </p>
+            </div>
+            <p id="mini-player-artist" class="font-sans text-xs text-[#a39b8e] truncate">
+              Chatpate Collection
+            </p>
+          </div>
+        </a>
+
+        <!-- Transport Controls -->
+        <div class="flex items-center gap-2 shrink-0">
+          <button
+            id="mini-player-play-btn"
+            type="button"
+            class="w-9 h-9 bg-[#ff9f1c] text-black hover:bg-[#ffb042] flex items-center justify-center rounded-lg transition-all cursor-pointer shadow"
+            title="Play / Pause"
+          >
+            <span id="mini-play-icon" class="flex items-center justify-center pointer-events-none">
+              <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </span>
+          </button>
+          <button
+            id="mini-player-next-btn"
+            type="button"
+            class="p-2 text-[#a39b8e] hover:text-[#f5f0e1] transition-colors cursor-pointer"
+            title="Next Song"
+          >
+            <svg class="w-5 h-5 fill-current pointer-events-none" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Master Client Audio Engine Script (Active Everywhere) -->
+    <script is:inline define:vars={{ songsData }}>
+      if (!window.chatpateState) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const playParamId = urlParams.get("play");
+        const savedSongId = localStorage.getItem("chatpate_last_song_id");
+        const savedSongIdxRaw = localStorage.getItem("chatpate_last_song_index");
+        let initialIndex = 0;
+        let savedTime = 0;
+
+        if (playParamId) {
+          const playIdx = songsData.findIndex((s) => s.id === playParamId);
+          if (playIdx !== -1) initialIndex = playIdx;
+        } else if (savedSongId) {
+          const foundIdx = songsData.findIndex((s) => s.id === savedSongId);
+          if (foundIdx !== -1) {
+            initialIndex = foundIdx;
+            savedTime = parseFloat(localStorage.getItem("chatpate_last_playback_time") || "0");
+          }
+        } else if (savedSongIdxRaw !== null) {
+          const parsed = parseInt(savedSongIdxRaw, 10);
+          if (!isNaN(parsed) && parsed >= 0 && parsed < songsData.length) {
+            initialIndex = parsed;
+            savedTime = parseFloat(localStorage.getItem("chatpate_last_playback_time") || "0");
+          }
+        }
+        if (isNaN(savedTime) || savedTime < 0) savedTime = 0;
+
+        window.chatpateState = {
+          player: null,
+          isPlayerReady: false,
+          isPlaying: false,
+          currentSongIndex: initialIndex,
+          savedTime: savedTime,
+          isShuffle: false,
+          isRepeat: false,
+          isMuted: false,
+          sfxEnabled: true,
+          excludedSongIds: new Set(JSON.parse(localStorage.getItem("chatpate_excluded_songs") || "[]"))
+        };
+      }
+
+      window.playSFX = function(type) {
+        if (!window.chatpateState.sfxEnabled) return;
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          const now = ctx.currentTime;
+          if (type === "click") {
+            osc.frequency.setValueAtTime(350, now);
+            osc.frequency.exponentialRampToValueAtTime(600, now + 0.04);
+            gain.gain.setValueAtTime(0.06, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.04);
+            osc.start(now);
+            osc.stop(now + 0.04);
+          }
+        } catch (e) {}
+      };
+
+      if (!window.YT && !document.getElementById("yt-api-script")) {
+        const tag = document.createElement("script");
+        tag.id = "yt-api-script";
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName("script")[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      }
+
+      window.onYouTubeIframeAPIReady = function() {
+        if (window.chatpateState.player) return;
+        const initialSong = songsData[window.chatpateState.currentSongIndex] || songsData[0];
+        window.chatpateState.player = new YT.Player("yt-player-iframe", {
+          height: "100%",
+          width: "100%",
+          videoId: initialSong?.id || "5RT6QMKJTjQ",
+          playerVars: {
+            playsinline: 1,
+            autoplay: 0,
+            controls: 1,
+            rel: 0,
+            modestbranding: 1,
+            start: Math.floor(window.chatpateState.savedTime)
+          },
+          events: {
+            onReady: window.onPlayerReady,
+            onStateChange: window.onPlayerStateChange,
+            onError: window.onPlayerError
+          }
+        });
+      };
+
+      window.onPlayerReady = function() {
+        window.chatpateState.isPlayerReady = true;
+        window.updateUI();
+        window.updatePlayIcons();
+      };
+
+      window.onPlayerStateChange = function(event) {
+        if (event.data === YT.PlayerState.PLAYING) {
+          window.chatpateState.isPlaying = true;
+        } else if (event.data === YT.PlayerState.PAUSED) {
+          window.chatpateState.isPlaying = false;
+        } else if (event.data === YT.PlayerState.ENDED) {
+          window.chatpateState.isPlaying = false;
+          window.playNextTrack();
+        }
+        window.updatePlayIcons();
+      };
+
+      window.onPlayerError = function() {
+        window.playNextTrack();
+      };
+
+      window.loadSong = function(index, autoPlay = true) {
+        if (index < 0 || index >= songsData.length) return;
+        window.chatpateState.currentSongIndex = index;
+        const song = songsData[index];
+        if (!song) return;
+
+        localStorage.setItem("chatpate_last_song_index", index);
+        localStorage.setItem("chatpate_last_song_id", song.id);
+
+        window.updateUI();
+
+        if (window.chatpateState.isPlayerReady && window.chatpateState.player && window.chatpateState.player.loadVideoById) {
+          window.chatpateState.player.loadVideoById(song.id);
+          if (autoPlay) {
+            window.chatpateState.player.playVideo();
+            window.chatpateState.isPlaying = true;
+          }
+        }
+        window.updatePlayIcons();
+      };
+
+      window.playNextTrack = function() {
+        let nextIndex = window.chatpateState.currentSongIndex;
+        if (window.chatpateState.isShuffle) {
+          let count = 0;
+          do {
+            nextIndex = Math.floor(Math.random() * songsData.length);
+            count++;
+          } while (
+            window.chatpateState.excludedSongIds.has(songsData[nextIndex]?.id) &&
+            count < songsData.length
+          );
+        } else {
+          let count = 0;
+          do {
+            nextIndex = (nextIndex + 1) % songsData.length;
+            count++;
+          } while (
+            window.chatpateState.excludedSongIds.has(songsData[nextIndex]?.id) &&
+            count < songsData.length
+          );
+        }
+        window.loadSong(nextIndex, true);
+      };
+
+      window.playPrevTrack = function() {
+        let prevIndex = window.chatpateState.currentSongIndex;
+        let count = 0;
+        do {
+          prevIndex = (prevIndex - 1 + songsData.length) % songsData.length;
+          count++;
+        } while (
+          window.chatpateState.excludedSongIds.has(songsData[prevIndex]?.id) &&
+          count < songsData.length
+        );
+        window.loadSong(prevIndex, true);
+      };
+
+      window.updatePlayIcons = function() {
+        const isPlaying = window.chatpateState?.isPlaying;
+        const playBtnIcons = document.querySelectorAll("#play-icon");
+        playBtnIcons.forEach((icon) => {
+          if (icon) {
+            icon.innerHTML = isPlaying
+              ? `<svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`
+              : `<svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+          }
+        });
+        const drawerPlayIcons = document.querySelectorAll("#drawer-play-icon");
+        drawerPlayIcons.forEach((icon) => {
+          if (icon) {
+            icon.innerHTML = isPlaying
+              ? `<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`
+              : `<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+          }
+        });
+        const miniPlayIcons = document.querySelectorAll("#mini-play-icon");
+        miniPlayIcons.forEach((icon) => {
+          if (icon) {
+            icon.innerHTML = isPlaying
+              ? `<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`
+              : `<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+          }
+        });
+        const detailPlayText = document.getElementById("detail-play-text");
+        if (detailPlayText) {
+          detailPlayText.innerText = isPlaying ? "PAUSE TRACK" : "PLAY IN CHATPATE CONSOLE";
+        }
+      };
+
+      window.updateUI = function() {
+        const idx = window.chatpateState?.currentSongIndex ?? 0;
+        const song = songsData[idx];
+        if (!song) return;
+
+        const titleEl = document.getElementById("player-song-title");
+        const artistEl = document.getElementById("player-song-artist");
+        const numEl = document.getElementById("player-track-number");
+
+        if (titleEl) titleEl.innerText = song.title;
+        if (artistEl) artistEl.innerText = song.artist;
+        if (numEl) numEl.innerText = `Track ${song.trackNumber} of ${songsData.length}`;
+
+        const playerMainArt = document.getElementById("player-main-artwork");
+        if (playerMainArt && song.id) {
+          playerMainArt.src = `https://img.youtube.com/vi/${song.id}/hqdefault.jpg`;
+        }
+
+        const miniTitle = document.getElementById("mini-player-title");
+        const miniArtist = document.getElementById("mini-player-artist");
+        const miniThumb = document.getElementById("mini-player-thumb");
+        if (miniTitle) miniTitle.innerText = song.title;
+        if (miniArtist) miniArtist.innerText = song.artist;
+        if (miniThumb && song.id) {
+          miniThumb.src = `https://img.youtube.com/vi/${song.id}/mqdefault.jpg`;
+        }
+
+        const upNextSong = songsData[(idx + 1) % songsData.length];
+        const upNextEl = document.getElementById("player-up-next-title");
+        if (upNextEl && upNextSong)
+          upNextEl.innerText = `${upNextSong.title} — ${upNextSong.artist}`;
+
+        const drawerSrEl = document.getElementById("drawer-current-sr");
+        const drawerBottomTitle = document.getElementById("drawer-bottom-song-title");
+        const drawerBottomArtist = document.getElementById("drawer-bottom-song-artist");
+        const drawerBottomThumb = document.getElementById("drawer-bottom-song-thumb");
+
+        if (drawerSrEl) drawerSrEl.innerText = `${idx + 1} of ${songsData.length}`;
+        if (drawerBottomTitle) drawerBottomTitle.innerText = song.title;
+        if (drawerBottomArtist) drawerBottomArtist.innerText = song.artist;
+        if (drawerBottomThumb && song.id) {
+          drawerBottomThumb.src = `https://img.youtube.com/vi/${song.id}/mqdefault.jpg`;
+        }
+
+        document.querySelectorAll(".drawer-song-item, .queue-song-item").forEach((item) => {
+          const itemId = item.getAttribute("data-song-id");
+          const titleText = item.querySelector(".drawer-title-text, h4");
+          const playingBadge = item.querySelector(".now-playing-badge");
+          if (itemId === song.id) {
+            item.classList.add("bg-[#ff9f1c]/25", "shadow-lg");
+            item.classList.remove("bg-[#150f24]", "bg-white/[0.03]");
+            if (titleText) {
+              titleText.classList.add("text-[#ff9f1c]", "font-bold");
+              titleText.classList.remove("text-[#f5f0e1]", "text-slate-200");
+            }
+            if (playingBadge) {
+              playingBadge.classList.remove("hidden");
+              playingBadge.classList.add("inline-block");
+            }
+          } else {
+            item.classList.remove("bg-[#ff9f1c]/25", "shadow-lg");
+            if (item.classList.contains("drawer-song-item")) {
+              item.classList.add("bg-[#150f24]");
+            } else {
+              item.classList.add("bg-white/[0.03]");
+            }
+            if (titleText) {
+              titleText.classList.remove("text-[#ff9f1c]", "font-bold");
+              titleText.classList.add("text-[#f5f0e1]");
+            }
+            if (playingBadge) {
+              playingBadge.classList.add("hidden");
+              playingBadge.classList.remove("inline-block");
+            }
+          }
+        });
+
+        document.querySelectorAll(".catalog-song-row").forEach((row) => {
+          const rowId = row.getAttribute("data-song-id");
+          const titleEl = row.querySelector(".catalog-title-text");
+          const badgeEl = row.querySelector(".now-playing-badge");
+          if (rowId === song.id) {
+            row.classList.add("border-[#ff9f1c]/50", "bg-[#ff9f1c]/20");
+            if (titleEl) titleEl.classList.add("text-[#ff9f1c]", "font-bold");
+            if (badgeEl) badgeEl.classList.remove("hidden");
+          } else {
+            row.classList.remove("border-[#ff9f1c]/50", "bg-[#ff9f1c]/20");
+            if (titleEl) titleEl.classList.remove("text-[#ff9f1c]", "font-bold");
+            if (badgeEl) badgeEl.classList.add("hidden");
+          }
+        });
+
+        const detailContainer = document.getElementById("detail-song-container");
+        if (detailContainer) {
+          const detailId = detailContainer.getAttribute("data-song-id");
+          const detailBadge = document.getElementById("detail-playing-badge");
+          if (detailId === song.id) {
+            detailContainer.classList.add("border-[#ff9f1c]/50", "bg-[#ff9f1c]/10");
+            if (detailBadge) detailBadge.classList.remove("hidden");
+          } else {
+            detailContainer.classList.remove("border-[#ff9f1c]/50", "bg-[#ff9f1c]/10");
+            if (detailBadge) detailBadge.classList.add("hidden");
+          }
+        }
+      };
+
+      window.initGlobalEvents = function() {
+        if (window.updateUI) window.updateUI();
+        if (window.updatePlayIcons) window.updatePlayIcons();
+
+        const miniBar = document.getElementById("global-mini-player-bar");
+        if (miniBar) {
+          const isHomePage = window.location.pathname === "/" || window.location.pathname === "";
+          if (isHomePage) {
+            miniBar.classList.add("translate-y-24", "opacity-0", "pointer-events-none");
+          } else {
+            miniBar.classList.remove("translate-y-24", "opacity-0", "pointer-events-none");
+          }
+        }
+
+        document.querySelectorAll(".catalog-play-btn, #detail-play-btn").forEach((btn) => {
+          btn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (window.playSFX) window.playSFX("click");
+            const songId = btn.getAttribute("data-song-id");
+            const songIdx = parseInt(btn.getAttribute("data-song-index"), 10);
+            const st = window.chatpateState;
+            if (st && songId === songsData[st.currentSongIndex]?.id && st.isPlayerReady && st.player) {
+              if (st.isPlaying) st.player.pauseVideo();
+              else st.player.playVideo();
+            } else if (!isNaN(songIdx) && window.loadSong) {
+              window.loadSong(songIdx, true);
+            }
+          };
+        });
+
+        const miniPlayBtn = document.getElementById("mini-player-play-btn");
+        if (miniPlayBtn) {
+          miniPlayBtn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (window.playSFX) window.playSFX("click");
+            const st = window.chatpateState;
+            if (!st || !st.isPlayerReady || !st.player) return;
+            if (st.isPlaying) st.player.pauseVideo();
+            else st.player.playVideo();
+          };
+        }
+
+        const miniNextBtn = document.getElementById("mini-player-next-btn");
+        if (miniNextBtn) {
+          miniNextBtn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (window.playSFX) window.playSFX("click");
+            if (window.playNextTrack) window.playNextTrack();
+          };
+        }
+      };
+
+      document.addEventListener("DOMContentLoaded", window.initGlobalEvents);
+      document.addEventListener("astro:page-load", window.initGlobalEvents);
+    </script>
   </body>
 </html>
